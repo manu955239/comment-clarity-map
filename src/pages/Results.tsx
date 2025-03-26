@@ -85,8 +85,7 @@ const Results = () => {
               Please return to the dashboard and analyze a URL.
             </p>
             <Button
-              as="a"
-              href="/dashboard"
+              to="/dashboard"
               variant="default"
             >
               Go to Dashboard

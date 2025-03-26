@@ -74,7 +74,7 @@ const Navbar: React.FC = () => {
               </Button>
             </div>
           ) : (
-            <Button as={Link} to="/login" size="sm">
+            <Button to="/login" size="sm">
               Sign In
             </Button>
           )}

@@ -1,6 +1,5 @@
-
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext';
 import Button from '@/components/common/Button';
 import Card from '@/components/common/Card';
@@ -12,9 +11,12 @@ import Footer from '@/components/Layout/Footer';
 const Index = () => {
   const { isAuthenticated } = useAuth();
   const [showAuthModal, setShowAuthModal] = useState(false);
+  const navigate = useNavigate();
   
   const handleStartClick = () => {
-    if (!isAuthenticated) {
+    if (isAuthenticated) {
+      navigate('/dashboard');
+    } else {
       setShowAuthModal(true);
     }
   };
@@ -45,8 +47,6 @@ const Index = () => {
             <div className="flex flex-col items-center justify-center gap-4 md:flex-row animate-fade-in animation-delay-200">
               <Button
                 size="lg"
-                as={Link}
-                to={isAuthenticated ? "/dashboard" : "#"}
                 onClick={handleStartClick}
                 icon={<ArrowRight size={20} />}
                 className="w-full md:w-auto"
@@ -57,7 +57,6 @@ const Index = () => {
               <Button
                 variant="outline"
                 size="lg"
-                as={Link}
                 to="/about"
                 className="w-full md:w-auto"
               >
@@ -188,8 +187,6 @@ const Index = () => {
               </p>
               <Button
                 size="lg"
-                as={Link}
-                to={isAuthenticated ? "/dashboard" : "#"}
                 onClick={handleStartClick}
               >
                 {isAuthenticated ? "Go to Dashboard" : "Get Started"}
@@ -202,7 +199,7 @@ const Index = () => {
       <Footer />
       
       {showAuthModal && !isAuthenticated && (
-        <AuthModal />
+        <AuthModal onClose={() => setShowAuthModal(false)} />
       )}
     </div>
   );

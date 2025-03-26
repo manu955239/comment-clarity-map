@@ -1,5 +1,5 @@
-
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { cn } from "@/lib/utils";
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
@@ -9,6 +9,8 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   isLoading?: boolean;
   fullWidth?: boolean;
   icon?: React.ReactNode;
+  to?: string; // For React Router links
+  href?: string; // For regular anchor links
 }
 
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
@@ -20,6 +22,8 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     isLoading = false, 
     fullWidth = false,
     icon,
+    to,
+    href,
     ...props 
   }, ref) => {
     const baseClasses = 'inline-flex items-center justify-center rounded-md font-medium transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none';
@@ -43,16 +47,57 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     
     const widthClass = fullWidth ? 'w-full' : '';
     
+    const classes = cn(
+      baseClasses,
+      sizeClasses,
+      variantClasses,
+      widthClass,
+      'relative overflow-hidden group',
+      className
+    );
+
+    // If we have a "to" prop, render a Link from react-router
+    if (to) {
+      return (
+        <Link 
+          to={to} 
+          className={classes}
+          onClick={props.onClick}
+        >
+          {/* Background animation effect on hover */}
+          <span className="absolute inset-0 w-full h-full bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:animate-[shimmer_1.5s_infinite] pointer-events-none opacity-0 group-hover:opacity-100" />
+          
+          <span className="flex items-center justify-center gap-2">
+            {icon && <span className="inline-flex">{icon}</span>}
+            {children}
+          </span>
+        </Link>
+      );
+    }
+    
+    // If we have an "href" prop, render a regular anchor tag
+    if (href) {
+      return (
+        <a 
+          href={href} 
+          className={classes}
+          onClick={props.onClick}
+        >
+          {/* Background animation effect on hover */}
+          <span className="absolute inset-0 w-full h-full bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:animate-[shimmer_1.5s_infinite] pointer-events-none opacity-0 group-hover:opacity-100" />
+          
+          <span className="flex items-center justify-center gap-2">
+            {icon && <span className="inline-flex">{icon}</span>}
+            {children}
+          </span>
+        </a>
+      );
+    }
+    
+    // Otherwise, render a button
     return (
       <button
-        className={cn(
-          baseClasses,
-          sizeClasses,
-          variantClasses,
-          widthClass,
-          'relative overflow-hidden group',
-          className
-        )}
+        className={classes}
         ref={ref}
         disabled={isLoading || props.disabled}
         {...props}

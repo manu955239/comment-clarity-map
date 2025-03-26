@@ -1,10 +1,18 @@
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import { toast } from 'sonner';
 
 type User = {
   id: string;
   username: string;
   email: string;
+};
+
+type RegisteredUser = {
+  id: string;
+  username: string;
+  email: string;
+  password: string;
 };
 
 interface AuthContextType {
@@ -38,16 +46,29 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       // Simulate API call delay
       await new Promise(resolve => setTimeout(resolve, 1000));
       
-      // For demo purposes, any email/password combination will work
-      // In a real app, you would validate credentials against a backend
-      const newUser = {
-        id: crypto.randomUUID(),
-        username: email.split('@')[0],
-        email
+      // Get registered users from localStorage
+      const registeredUsers = JSON.parse(localStorage.getItem('registeredUsers') || '[]') as RegisteredUser[];
+      
+      // Find user with matching email and password
+      const matchedUser = registeredUsers.find(u => 
+        u.email === email && u.password === password
+      );
+      
+      if (!matchedUser) {
+        toast.error('Invalid email or password');
+        setLoading(false);
+        return false;
+      }
+      
+      // Create user object (without password) to store in session
+      const loggedInUser = {
+        id: matchedUser.id,
+        username: matchedUser.username,
+        email: matchedUser.email
       };
       
-      setUser(newUser);
-      localStorage.setItem('user', JSON.stringify(newUser));
+      setUser(loggedInUser);
+      localStorage.setItem('user', JSON.stringify(loggedInUser));
       setLoading(false);
       return true;
     } catch (error) {
@@ -64,16 +85,37 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       // Simulate API call delay
       await new Promise(resolve => setTimeout(resolve, 1500));
       
-      // For demo purposes, any registration will succeed
-      // In a real app, you would send the data to a backend
+      // Get existing registered users
+      const existingUsers = JSON.parse(localStorage.getItem('registeredUsers') || '[]') as RegisteredUser[];
+      
+      // Check if email already exists
+      if (existingUsers.some(user => user.email === email)) {
+        toast.error('Email already registered');
+        setLoading(false);
+        return false;
+      }
+      
+      // Create new user
       const newUser = {
         id: crypto.randomUUID(),
         username,
-        email
+        email,
+        password // In a real app, this would be hashed
       };
       
-      setUser(newUser);
-      localStorage.setItem('user', JSON.stringify(newUser));
+      // Add to registered users
+      const updatedUsers = [...existingUsers, newUser];
+      localStorage.setItem('registeredUsers', JSON.stringify(updatedUsers));
+      
+      // Log in the user automatically
+      const loggedInUser = {
+        id: newUser.id,
+        username: newUser.username,
+        email: newUser.email
+      };
+      
+      setUser(loggedInUser);
+      localStorage.setItem('user', JSON.stringify(loggedInUser));
       setLoading(false);
       return true;
     } catch (error) {
