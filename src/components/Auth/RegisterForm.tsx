@@ -41,7 +41,16 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onToggleForm }) => {
       const success = await register(username, email, password);
       
       if (success) {
-        toast.success('Registration successful');
+        toast.success('Registration successful! Please log in with your credentials.');
+        
+        // Clear form fields after successful registration
+        setUsername('');
+        setEmail('');
+        setPassword('');
+        setConfirmPassword('');
+        
+        // Switch to login form
+        onToggleForm();
       } else {
         toast.error('Registration failed');
       }

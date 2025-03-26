@@ -69,6 +69,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       
       setUser(loggedInUser);
       localStorage.setItem('user', JSON.stringify(loggedInUser));
+      toast.success('Login successful!');
       setLoading(false);
       return true;
     } catch (error) {
@@ -107,15 +108,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       const updatedUsers = [...existingUsers, newUser];
       localStorage.setItem('registeredUsers', JSON.stringify(updatedUsers));
       
-      // Log in the user automatically
-      const loggedInUser = {
-        id: newUser.id,
-        username: newUser.username,
-        email: newUser.email
-      };
-      
-      setUser(loggedInUser);
-      localStorage.setItem('user', JSON.stringify(loggedInUser));
+      // Don't automatically log in the user
       setLoading(false);
       return true;
     } catch (error) {
@@ -128,6 +121,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const logout = () => {
     setUser(null);
     localStorage.removeItem('user');
+    toast.info('You have been logged out');
   };
 
   return (
