@@ -3,22 +3,51 @@ import React, { useState } from 'react';
 import ToxicityPieChart from '../Charts/ToxicityPieChart';
 import Card from '@/components/common/Card';
 import Button from '@/components/common/Button';
-import { Eye, EyeOff, FilterX, BarChart4, MessageSquare, ExternalLink } from 'lucide-react';
+import { Eye, EyeOff, FilterX, BarChart4, MessageSquare, ExternalLink, ArrowDownAZ, ArrowUpAZ } from 'lucide-react';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 interface YouTubeResultsProps {
   results: any;
   url: string;
 }
 
+type SortOption = 'newest' | 'oldest' | 'toxicityHighToLow' | 'toxicityLowToHigh';
+
 const YouTubeResults: React.FC<YouTubeResultsProps> = ({ results, url }) => {
   const [showToxic, setShowToxic] = useState<boolean>(true);
   const [showNonToxic, setShowNonToxic] = useState<boolean>(true);
+  const [sortOption, setSortOption] = useState<SortOption>('newest');
   
-  const filteredComments = results.comments.filter((comment: any) => {
-    if (comment.isToxic && showToxic) return true;
-    if (!comment.isToxic && showNonToxic) return true;
-    return false;
-  });
+  // Apply filters and sorting to comments
+  const filteredAndSortedComments = React.useMemo(() => {
+    // First filter the comments
+    const filtered = results.comments.filter((comment: any) => {
+      if (comment.isToxic && showToxic) return true;
+      if (!comment.isToxic && showNonToxic) return true;
+      return false;
+    });
+    
+    // Then sort the filtered comments
+    return [...filtered].sort((a, b) => {
+      switch (sortOption) {
+        case 'newest':
+          return new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime();
+        case 'oldest':
+          return new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime();
+        case 'toxicityHighToLow':
+          return b.toxicity - a.toxicity;
+        case 'toxicityLowToHigh':
+          return a.toxicity - b.toxicity;
+        default:
+          return 0;
+      }
+    });
+  }, [results.comments, showToxic, showNonToxic, sortOption]);
   
   const toxicityData = [
     { name: 'Toxic', value: results.stats.toxicComments, color: '#ef4444' },
@@ -32,6 +61,17 @@ const YouTubeResults: React.FC<YouTubeResultsProps> = ({ results, url }) => {
       return urlObj.hostname + urlObj.pathname;
     } catch (e) {
       return url;
+    }
+  };
+
+  // Get the label for the current sort option
+  const getSortLabel = () => {
+    switch (sortOption) {
+      case 'newest': return 'Newest';
+      case 'oldest': return 'Oldest';
+      case 'toxicityHighToLow': return 'Most Toxic';
+      case 'toxicityLowToHigh': return 'Least Toxic';
+      default: return 'Sort';
     }
   };
   
@@ -157,14 +197,46 @@ const YouTubeResults: React.FC<YouTubeResultsProps> = ({ results, url }) => {
       </Card>
       
       <Card variant="default" padding="lg">
-        <h2 className="text-xl font-bold mb-6 flex items-center gap-2">
-          <MessageSquare className="text-primary" size={20} />
-          Comments Analysis
-        </h2>
+        <div className="flex justify-between items-center mb-6">
+          <h2 className="text-xl font-bold flex items-center gap-2">
+            <MessageSquare className="text-primary" size={20} />
+            Comments Analysis
+          </h2>
+          
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button 
+                variant="outline" 
+                size="sm"
+                className="flex items-center gap-2"
+              >
+                {sortOption.includes('toxicity') ? 
+                  (sortOption === 'toxicityHighToLow' ? <ArrowDownAZ size={16} /> : <ArrowUpAZ size={16} />) : 
+                  (sortOption === 'newest' ? <ArrowDownAZ size={16} /> : <ArrowUpAZ size={16} />)
+                }
+                {getSortLabel()}
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="bg-background border border-border">
+              <DropdownMenuItem onClick={() => setSortOption('newest')}>
+                Newest First
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => setSortOption('oldest')}>
+                Oldest First
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => setSortOption('toxicityHighToLow')}>
+                Most Toxic First
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => setSortOption('toxicityLowToHigh')}>
+                Least Toxic First
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
         
         <div className="space-y-4">
-          {filteredComments.length > 0 ? (
-            filteredComments.map((comment: any) => (
+          {filteredAndSortedComments.length > 0 ? (
+            filteredAndSortedComments.map((comment: any) => (
               <Card 
                 key={comment.id} 
                 variant="glass" 
