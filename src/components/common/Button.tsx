@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { cn } from "@/lib/utils";
@@ -62,7 +63,12 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
         <Link 
           to={to} 
           className={classes}
-          onClick={props.onClick}
+          onClick={(e) => {
+            if (props.onClick) {
+              const handler = props.onClick as unknown as React.MouseEventHandler<HTMLAnchorElement>;
+              handler(e as React.MouseEvent<HTMLAnchorElement>);
+            }
+          }}
         >
           {/* Background animation effect on hover */}
           <span className="absolute inset-0 w-full h-full bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:animate-[shimmer_1.5s_infinite] pointer-events-none opacity-0 group-hover:opacity-100" />
@@ -81,7 +87,12 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
         <a 
           href={href} 
           className={classes}
-          onClick={props.onClick}
+          onClick={(e) => {
+            if (props.onClick) {
+              const handler = props.onClick as unknown as React.MouseEventHandler<HTMLAnchorElement>;
+              handler(e as React.MouseEvent<HTMLAnchorElement>);
+            }
+          }}
         >
           {/* Background animation effect on hover */}
           <span className="absolute inset-0 w-full h-full bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:animate-[shimmer_1.5s_infinite] pointer-events-none opacity-0 group-hover:opacity-100" />

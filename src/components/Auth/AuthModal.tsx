@@ -7,10 +7,11 @@ import { X } from 'lucide-react';
 
 interface AuthModalProps {
   onClose?: () => void;
+  initialView?: 'login' | 'register';
 }
 
-const AuthModal: React.FC<AuthModalProps> = ({ onClose }) => {
-  const [isLogin, setIsLogin] = useState(false); // Default to register view
+const AuthModal: React.FC<AuthModalProps> = ({ onClose, initialView = 'register' }) => {
+  const [isLogin, setIsLogin] = useState(initialView === 'login');
   
   const toggleForm = () => {
     setIsLogin(!isLogin);
