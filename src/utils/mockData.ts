@@ -76,7 +76,7 @@ export const mockYouTubeComments = [
   {
     id: '10',
     author: 'RageQuitter',
-    text: 'What a complete waste of my time! You're an idiot who doesn\'t know anything!',
+    text: 'What a complete waste of my time! You\'re an idiot who doesn\'t know anything!',
     timestamp: '2023-10-21T09:30:00Z',
     toxicity: 0.95, // Very high toxicity
     isToxic: true
@@ -87,7 +87,7 @@ export const mockYouTubeComments = [
 export const mockInstagramReel = {
   id: 'reel123',
   creator: 'influencer_account',
-  audioTranscript: 'Hey everyone! Today I'm going to show you my favorite products that I use every day. Some people might not like them, but I think they're amazing and worth trying out!',
+  audioTranscript: "Hey everyone! Today I'm going to show you my favorite products that I use every day. Some people might not like them, but I think they're amazing and worth trying out!",
   audioToxicity: 0.08, // Very low toxicity
   isAudioToxic: false,
   comments: [
@@ -102,7 +102,7 @@ export const mockInstagramReel = {
     {
       id: 'ic2',
       author: 'hater_account',
-      text: 'You're just promoting this for money. So fake and dishonest!',
+      text: 'You\'re just promoting this for money. So fake and dishonest!',
       timestamp: '2023-11-01T14:05:00Z',
       toxicity: 0.72, // High toxicity
       isToxic: true
@@ -110,7 +110,7 @@ export const mockInstagramReel = {
     {
       id: 'ic3',
       author: 'neutral_viewer',
-      text: 'Have you tried the other version of this product? I heard it's better.',
+      text: 'Have you tried the other version of this product? I heard it\'s better.',
       timestamp: '2023-11-01T15:30:00Z',
       toxicity: 0.05, // Very low toxicity
       isToxic: false
@@ -118,7 +118,7 @@ export const mockInstagramReel = {
     {
       id: 'ic4',
       author: 'angry_customer',
-      text: 'I bought this because of you and it was terrible! You're the worst influencer ever!',
+      text: 'I bought this because of you and it was terrible! You\'re the worst influencer ever!',
       timestamp: '2023-11-02T09:45:00Z',
       toxicity: 0.85, // High toxicity
       isToxic: true
@@ -142,7 +142,7 @@ export const mockInstagramReel = {
     {
       id: 'ic7',
       author: 'genuine_fan',
-      text: 'Just ordered it! Can't wait to try it out. Thanks for the recommendation!',
+      text: 'Just ordered it! Can\'t wait to try it out. Thanks for the recommendation!',
       timestamp: '2023-11-03T16:40:00Z',
       toxicity: 0.01, // Very low toxicity
       isToxic: false
