@@ -25,8 +25,8 @@ function generateMockYouTubeAnalysis(videoUrl: string) {
   console.log(`Analyzing YouTube video: ${videoUrl} (ID: ${videoId})`);
   
   return {
-    title: "YouTube Video Title",
-    channel: "YouTube Channel",
+    title: "YouTube Video Title " + Math.floor(Math.random() * 100),
+    channel: "YouTube Channel " + Math.floor(Math.random() * 100),
     stats: {
       views: Math.floor(Math.random() * 1000000),
       likes: Math.floor(Math.random() * 50000),
@@ -56,8 +56,7 @@ function generateMockYouTubeAnalysis(videoUrl: string) {
   };
 }
 
-// In a real implementation, we would use the YouTube API to fetch and analyze video data
-// const YOUTUBE_API_KEY = Deno.env.get("YOUTUBE_API_KEY") || "AIzaSyA2IZJWCC4lwe2gFXzmBJEcrMw22E1ij5k";
+// YouTube API Key
 const YOUTUBE_API_KEY = "AIzaSyA2IZJWCC4lwe2gFXzmBJEcrMw22E1ij5k";
 
 serve(async (req) => {
@@ -66,7 +65,7 @@ serve(async (req) => {
     return new Response(null, {
       status: 204,
       headers: corsHeaders,
-    })
+    });
   }
   
   try {

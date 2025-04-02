@@ -16,8 +16,8 @@ function generateMockInstagramAnalysis(reelUrl: string) {
   console.log(`Analyzing Instagram reel: ${reelUrl}`);
   
   return {
-    title: "Instagram Reel",
-    creator: "instagram_user",
+    title: "Instagram Reel Analysis",
+    creator: "instagram_user_" + Math.floor(Math.random() * 1000),
     stats: {
       likes: Math.floor(Math.random() * 10000),
       views: Math.floor(Math.random() * 100000),
@@ -55,7 +55,7 @@ serve(async (req) => {
     return new Response(null, {
       status: 204,
       headers: corsHeaders,
-    })
+    });
   }
   
   try {
