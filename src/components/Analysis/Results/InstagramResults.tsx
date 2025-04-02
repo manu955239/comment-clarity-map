@@ -58,7 +58,7 @@ const InstagramResults: React.FC<InstagramResultsProps> = ({ results, url }) => 
   const comparisonData = [
     {
       name: 'Audio',
-      toxicity: Math.round(results.audioToxicity * 100),
+      toxicity: Math.round(results.audio_toxicity * 100),
     },
     {
       name: 'Comments',
@@ -160,8 +160,8 @@ const InstagramResults: React.FC<InstagramResultsProps> = ({ results, url }) => 
           </Card>
           
           <Card variant="glass" className="p-4 text-center">
-            <div className={`text-4xl font-bold mb-2 ${results.isAudioToxic ? 'text-red-500' : 'text-green-500'}`}>
-              {(results.audioToxicity * 100).toFixed(1)}%
+            <div className={`text-4xl font-bold mb-2 ${results.is_audio_toxic ? 'text-red-500' : 'text-green-500'}`}>
+              {(results.audio_toxicity * 100).toFixed(1)}%
             </div>
             <div className="text-sm text-muted-foreground flex items-center justify-center gap-2">
               <Mic size={16} />
@@ -198,16 +198,16 @@ const InstagramResults: React.FC<InstagramResultsProps> = ({ results, url }) => 
             Audio Transcript
           </h2>
           <div className="p-4 bg-muted/50 rounded-md">
-            <p className="text-sm">"{results.audioTranscript}"</p>
+            <p className="text-sm">"{results.audio_transcript}"</p>
           </div>
           <div className="mt-4 flex items-center justify-between">
             <span className="text-sm text-muted-foreground">Toxicity Score:</span>
             <div className={`text-sm px-2 py-1 rounded-full ${
-              results.isAudioToxic 
+              results.is_audio_toxic 
                 ? 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400' 
                 : 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400'
             }`}>
-              {(results.audioToxicity * 100).toFixed(1)}% - {results.isAudioToxic ? 'Toxic' : 'Non-Toxic'}
+              {(results.audio_toxicity * 100).toFixed(1)}% - {results.is_audio_toxic ? 'Toxic' : 'Non-Toxic'}
             </div>
           </div>
         </Card>
@@ -253,14 +253,14 @@ const InstagramResults: React.FC<InstagramResultsProps> = ({ results, url }) => 
         
         <div className="space-y-4">
           {filteredAndSortedComments.length > 0 ? (
-            filteredAndSortedComments.map((comment: any) => (
+            filteredAndSortedComments.map((comment: any, index: number) => (
               <Card 
-                key={comment.id} 
+                key={comment.id || index} 
                 variant="glass" 
                 className={`p-4 border-l-4 ${comment.isToxic ? 'border-l-red-500' : 'border-l-green-500'}`}
               >
                 <div className="flex justify-between items-start mb-2">
-                  <div className="font-medium">{comment.author}</div>
+                  <div className="font-medium">{comment.author || comment.username}</div>
                   <div className={`text-xs px-2 py-1 rounded-full ${
                     comment.isToxic 
                       ? 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400' 

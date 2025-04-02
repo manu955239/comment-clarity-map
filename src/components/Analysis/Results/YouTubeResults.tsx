@@ -82,7 +82,7 @@ const YouTubeResults: React.FC<YouTubeResultsProps> = ({ results, url }) => {
           <div>
             <h1 className="text-2xl font-bold mb-1">{results.title}</h1>
             <div className="flex items-center text-sm text-muted-foreground">
-              <span className="mr-2">{results.channel}</span>
+              <span className="mr-2">{results.creator}</span>
               <a href={url} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-primary hover:underline">
                 {formatUrl(url)} 
                 <ExternalLink size={14} />
@@ -236,14 +236,14 @@ const YouTubeResults: React.FC<YouTubeResultsProps> = ({ results, url }) => {
         
         <div className="space-y-4">
           {filteredAndSortedComments.length > 0 ? (
-            filteredAndSortedComments.map((comment: any) => (
+            filteredAndSortedComments.map((comment: any, index: number) => (
               <Card 
-                key={comment.id} 
+                key={comment.id || index} 
                 variant="glass" 
                 className={`p-4 border-l-4 ${comment.isToxic ? 'border-l-red-500' : 'border-l-green-500'}`}
               >
                 <div className="flex justify-between items-start mb-2">
-                  <div className="font-medium">{comment.author}</div>
+                  <div className="font-medium">{comment.author || comment.username}</div>
                   <div className={`text-xs px-2 py-1 rounded-full ${
                     comment.isToxic 
                       ? 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400' 

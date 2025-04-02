@@ -9,9 +9,11 @@ import YouTubeResults from '@/components/Analysis/Results/YouTubeResults';
 import InstagramResults from '@/components/Analysis/Results/InstagramResults';
 import LoadingAnimation from '@/components/Analysis/LoadingAnimation';
 import { useAuth } from '@/context/AuthContext';
+import { supabase } from '@/integrations/supabase/client';
+import { toast } from 'sonner';
 
 const Results = () => {
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, user } = useAuth();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [results, setResults] = useState<any>(null);
@@ -25,24 +27,57 @@ const Results = () => {
       return;
     }
     
-    const storedResults = sessionStorage.getItem('analysisResults');
+    const fetchAnalysisResults = async () => {
+      try {
+        // Get the analysis ID from session storage
+        const analysisId = sessionStorage.getItem('analysisId');
+        
+        if (!analysisId) {
+          navigate('/dashboard');
+          return;
+        }
+        
+        // Get the analysis record
+        const { data: analysisRecord, error: analysisError } = await supabase
+          .from('content_analysis')
+          .select('*')
+          .eq('id', analysisId)
+          .single();
+        
+        if (analysisError || !analysisRecord) {
+          throw new Error('Analysis record not found');
+        }
+        
+        // Make sure the analysis belongs to the current user
+        if (analysisRecord.user_id !== user?.id) {
+          throw new Error('You do not have permission to view this analysis');
+        }
+        
+        // Get the analysis results
+        const { data: resultsData, error: resultsError } = await supabase
+          .from('analysis_results')
+          .select('*')
+          .eq('analysis_id', analysisId)
+          .single();
+        
+        if (resultsError || !resultsData) {
+          throw new Error('Analysis results not found');
+        }
+        
+        // Update the state with the results
+        setPlatform(resultsData.platform);
+        setUrl(analysisRecord.content_url);
+        setResults(resultsData);
+        setLoading(false);
+      } catch (error) {
+        console.error('Error fetching analysis results:', error);
+        toast.error('Failed to load analysis results');
+        navigate('/dashboard');
+      }
+    };
     
-    if (!storedResults) {
-      navigate('/dashboard');
-      return;
-    }
-    
-    // Simulate loading for a smoother experience
-    const loadTimer = setTimeout(() => {
-      const parsedResults = JSON.parse(storedResults);
-      setResults(parsedResults.results);
-      setPlatform(parsedResults.platform);
-      setUrl(parsedResults.url);
-      setLoading(false);
-    }, 1500);
-    
-    return () => clearTimeout(loadTimer);
-  }, [isAuthenticated, navigate]);
+    fetchAnalysisResults();
+  }, [isAuthenticated, navigate, user]);
   
   if (loading) {
     return (

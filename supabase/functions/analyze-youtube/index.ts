@@ -24,35 +24,104 @@ function generateMockYouTubeAnalysis(videoUrl: string) {
   const videoId = extractVideoId(videoUrl);
   console.log(`Analyzing YouTube video: ${videoUrl} (ID: ${videoId})`);
   
+  // Generate a timestamp for comments to have proper dates
+  const baseDate = new Date();
+  
   return {
-    title: "YouTube Video Title " + Math.floor(Math.random() * 100),
-    channel: "YouTube Channel " + Math.floor(Math.random() * 100),
+    title: "How to Build a React Application",
+    channel: "CodeWithExpert",
     stats: {
-      views: Math.floor(Math.random() * 1000000),
-      likes: Math.floor(Math.random() * 50000),
-      dislikes: Math.floor(Math.random() * 5000),
-      commentCount: Math.floor(Math.random() * 2000),
+      views: 235789,
+      likes: 12567,
+      dislikes: 342,
+      commentCount: 10,
+      totalComments: 10,
+      toxicComments: 4,
+      nonToxicComments: 6,
+      averageToxicity: 0.29
     },
     comments: [
       {
-        username: "viewer1",
-        text: "Great content, really enjoyed it!",
-        toxicity: 0.03,
-        isToxic: false,
+        id: '1',
+        author: 'User123',
+        text: 'This video is amazing, I learned so much from it!',
+        timestamp: new Date(baseDate.getTime() - 3600000 * 24 * 7).toISOString(),
+        toxicity: 0.02,
+        isToxic: false
       },
       {
-        username: "viewer2",
-        text: "This video is absolutely terrible, the creator should be ashamed",
-        toxicity: 0.78,
-        isToxic: true,
+        id: '2',
+        author: 'AngryViewer',
+        text: 'This is the worst content I have ever seen. Total garbage!',
+        timestamp: new Date(baseDate.getTime() - 3600000 * 24 * 6).toISOString(),
+        toxicity: 0.75,
+        isToxic: true
       },
       {
-        username: "viewer3",
-        text: "I learned so much, thanks for sharing",
+        id: '3',
+        author: 'CalmObserver',
+        text: 'I disagree with some points, but overall it was informative.',
+        timestamp: new Date(baseDate.getTime() - 3600000 * 24 * 5).toISOString(),
+        toxicity: 0.15,
+        isToxic: false
+      },
+      {
+        id: '4',
+        author: 'ToxicTroll',
+        text: 'You should just delete your channel, nobody wants to see this stupid content!',
+        timestamp: new Date(baseDate.getTime() - 3600000 * 24 * 4).toISOString(),
+        toxicity: 0.89,
+        isToxic: true
+      },
+      {
+        id: '5',
+        author: 'PositivePerson',
+        text: 'Thank you for sharing your knowledge with us. Much appreciated!',
+        timestamp: new Date(baseDate.getTime() - 3600000 * 24 * 3).toISOString(),
         toxicity: 0.01,
-        isToxic: false,
+        isToxic: false
       },
-    ],
+      {
+        id: '6',
+        author: 'CriticalThought',
+        text: 'The production quality could be better, but the content is good.',
+        timestamp: new Date(baseDate.getTime() - 3600000 * 24 * 2).toISOString(),
+        toxicity: 0.25,
+        isToxic: false
+      },
+      {
+        id: '7',
+        author: 'FrustratedFan',
+        text: 'Stop making videos if you can\'t even get basic facts right. Pathetic!',
+        timestamp: new Date(baseDate.getTime() - 3600000 * 24 * 1).toISOString(),
+        toxicity: 0.82,
+        isToxic: true
+      },
+      {
+        id: '8',
+        author: 'RegularViewer',
+        text: 'I watch all your videos. Keep up the good work!',
+        timestamp: new Date(baseDate.getTime() - 3600000 * 12).toISOString(),
+        toxicity: 0.05,
+        isToxic: false
+      },
+      {
+        id: '9',
+        author: 'TechEnthusiast',
+        text: 'The explanation at 5:23 was really clear. Thanks!',
+        timestamp: new Date(baseDate.getTime() - 3600000 * 6).toISOString(),
+        toxicity: 0.03,
+        isToxic: false
+      },
+      {
+        id: '10',
+        author: 'RageQuitter',
+        text: 'What a complete waste of my time! You\'re an idiot who doesn\'t know anything!',
+        timestamp: new Date(baseDate.getTime() - 3600000 * 1).toISOString(),
+        toxicity: 0.95,
+        isToxic: true
+      }
+    ]
   };
 }
 

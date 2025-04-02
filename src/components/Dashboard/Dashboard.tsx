@@ -30,7 +30,23 @@ const Dashboard: React.FC = () => {
       // Display a persistent toast during analysis
       toast.loading(`Analyzing ${selectedPlatform} content...`);
       
-      // Call the appropriate edge function based on platform
+      // Step 1: Create a record in the content_analysis table
+      const { data: analysisRecord, error: insertError } = await supabase
+        .from('content_analysis')
+        .insert({
+          user_id: user.id,
+          platform: selectedPlatform,
+          content_url: url,
+          status: 'processing'
+        })
+        .select()
+        .single();
+      
+      if (insertError) {
+        throw new Error(`Failed to create analysis record: ${insertError.message}`);
+      }
+      
+      // Step 2: Call the appropriate edge function based on platform
       let analysisResults;
       
       if (selectedPlatform === 'youtube') {
@@ -49,15 +65,40 @@ const Dashboard: React.FC = () => {
         analysisResults = data;
       }
       
+      // Step 3: Save the results to the analysis_results table
+      const { error: resultsError } = await supabase
+        .from('analysis_results')
+        .insert({
+          analysis_id: analysisRecord.id,
+          platform: selectedPlatform,
+          title: analysisResults.title || null,
+          creator: selectedPlatform === 'youtube' ? analysisResults.channel : analysisResults.creator,
+          stats: analysisResults.stats,
+          comments: analysisResults.comments,
+          audio_transcript: analysisResults.audioTranscript || null,
+          audio_toxicity: analysisResults.audioToxicity || null,
+          is_audio_toxic: analysisResults.isAudioToxic || null
+        });
+      
+      if (resultsError) {
+        throw new Error(`Failed to save analysis results: ${resultsError.message}`);
+      }
+      
+      // Step 4: Update the analysis record status to completed
+      const { error: updateError } = await supabase
+        .from('content_analysis')
+        .update({ status: 'completed' })
+        .eq('id', analysisRecord.id);
+      
+      if (updateError) {
+        console.error(`Failed to update analysis status: ${updateError.message}`);
+      }
+      
       toast.dismiss();
       toast.success('Analysis complete!');
       
-      // Store results in session storage for the results page
-      sessionStorage.setItem('analysisResults', JSON.stringify({
-        platform: selectedPlatform,
-        url,
-        results: analysisResults
-      }));
+      // Store the analysis ID in the session for the results page
+      sessionStorage.setItem('analysisId', analysisRecord.id);
       
       // Navigate to results page
       navigate('/results');
